@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { contextBridge, ipcRenderer, IpcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, } from 'electron'
 import { domReady } from './utils'
 import { useLoading } from './loading'
 
@@ -34,3 +34,7 @@ function withPrototype(obj: Record<string, any>) {
   }
   return obj
 }
+ipcRenderer.send("ping", "通知主进程！")
+ipcRenderer.on("message", (event, text) => {
+    console.log(text);
+})

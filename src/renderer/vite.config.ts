@@ -1,16 +1,30 @@
-import { join } from 'path'
+import  { join }  from 'path'
+import path from 'path'
 import { builtinModules } from 'module'
 import { defineConfig, Plugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import resolve from 'vite-plugin-resolve'
 import pkg from '../../package.json'
+import { svgBuilder } from './src/plugins/svgBuilder'; 
 
+const PACKAGE_ROOT = __dirname;
 // https://vitejs.dev/config/
 export default defineConfig({
   mode: process.env.NODE_ENV,
-  root: __dirname,
+  root: PACKAGE_ROOT,
+  resolve:{alias:{
+    // '@/':join(PACKAGE_ROOT, 'src') + '/renderer/src',
+    "@": path.resolve(__dirname,"src")
+    }
+  },
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: tag => tag === 'webview'
+        }
+      }
+    }),
     resolveElectron(
       /**
        * you can custom other module in here
@@ -21,15 +35,21 @@ export default defineConfig({
        * }
        */
     ),
+    svgBuilder('./src/renderer/src/assets/icon/svg/'),
   ],
+  
   base: './',
   build: {
+    sourcemap: true,
     emptyOutDir: true,
     outDir: '../../dist/renderer',
   },
   server: {
     host: pkg.env.HOST,
     port: pkg.env.PORT,
+    // fs: {
+    //   strict: true,
+    // },
   },
 })
 
@@ -41,7 +61,7 @@ export function resolveElectron(resolves: Parameters<typeof resolve>[0] = {}): P
   // https://github.com/caoxiemeihao/vite-plugins/tree/main/packages/resolve#readme
   return resolve({
     electron: electronExport(),
-    ...builtinModulesExport(builtins),
+    // ...builtinModulesExport(builtins),
     ...resolves,
   })
 
@@ -81,7 +101,7 @@ export function resolveElectron(resolves: Parameters<typeof resolve>[0] = {}): P
   function builtinModulesExport(modules: string[]) {
     return modules.map((moduleId) => {
       const nodeModule = require(moduleId)
-      const requireModule = `const M = require("${moduleId}");`
+      const requireModule = `const M = import.meta.glob("${moduleId}");`
       const exportDefault = `export default M;`
       const exportMembers = Object.keys(nodeModule).map(attr => `export const ${attr} = M.${attr}`).join(';\n') + ';'
       const nodeModuleCode = `
