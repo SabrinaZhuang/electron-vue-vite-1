@@ -58,5 +58,5 @@ const store = createStore({
 //     ...modules
 //   }
 // })
-console.log('模块',modulesFiles,modules,store)
+// console.log('模块',modulesFiles,modules,store)
 export default store

@@ -10,28 +10,24 @@
   <el-card
     class="login-card width-500"
     v-loading="loading"
-    element-loading-background="rgba(0, 0, 0, 0.1)">
-    <el-form
-      :model="form"
-      :rules="rules"
-      ref="refForm"
-      @keyup.enter="submit()"
-      status-icon>
+    element-loading-background="rgba(0, 0, 0, 0.1)"
+  >
+    <el-form :model="form" :rules="rules" ref="refForm" @keyup.enter="submit()" status-icon>
       <el-form-item prop="username">
         <el-input v-model="form.username" placeholder="账户" clearable>
           <template #prefix>
-            <span><g-svg name="user" /></span>
+            <span>
+              <g-svg name="user" />
+            </span>
           </template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input
-          v-model="form.password"
-          placeholder="密码"
-          show-password
-          clearable>
+        <el-input v-model="form.password" placeholder="密码" show-password clearable>
           <template #prefix>
-            <span><g-svg name="lock" /></span>
+            <span>
+              <g-svg name="lock" />
+            </span>
           </template>
         </el-input>
       </el-form-item>
@@ -40,16 +36,14 @@
           <el-col :span="16" class="height-36">
             <el-input v-model="form.code" placeholder="验证码" clearable>
               <template #prefix>
-                <span><g-svg name="verification" /></span>
+                <span>
+                  <g-svg name="verification" />
+                </span>
               </template>
             </el-input>
           </el-col>
           <el-col :span="8" class="height-36 cursor-pointer">
-            <img
-              :src="captchaPath"
-              @click="captcha()"
-              alt="验证码"
-              class="width-full">
+            <img :src="captchaPath" @click="captcha()" alt="验证码" class="width-full" />
           </el-col>
         </el-row>
       </el-form-item>
@@ -86,7 +80,7 @@ export default defineComponent({
       uuid: '',
       code: ''
     })
-    const rules = reactive(function() {
+    const rules = reactive(function () {
       return {
         username: [{ required: true, message: '账户不能为空', trigger: 'blur' }],
         password: [{ required: true, message: '密码不能为空', trigger: 'blur' }],
@@ -130,7 +124,7 @@ export default defineComponent({
     }
 
     onBeforeMount(() => {
-      console.log('验证码',getUUID)
+      // console.log('验证码',getUUID)
       captcha()
     })
 

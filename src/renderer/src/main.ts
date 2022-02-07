@@ -10,7 +10,7 @@ import * as icons from '@element-plus/icons-vue'
 
 import svgIcon from './assets/icon/svgIcon.vue'
 
-const app =createApp(App)
+const app = createApp(App)
 for (const name in icons) {
   app.component(name, (icons as any)[name])
 }
@@ -23,6 +23,6 @@ app.use(element)
   .mount('#app')
   .$nextTick(window.removeLoading)
 
-console.log('fs', window.fs)
-console.log('ipcRenderer', window.ipcRenderer)
-console.log(Components)
+// console.log('fs', window.fs)
+// console.log('ipcRenderer', window.ipcRenderer)
+// console.log(Components)

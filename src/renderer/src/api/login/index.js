@@ -23,8 +23,8 @@ export function captchaApi(params) {
     method: 'get',
     params: params
   }
-  result = `${ getApiBaseUrl() + options.url }?${ parseJson2Param(options.params) }`
-  console.log('验证码结果',result)
+  result = `${getApiBaseUrl() + options.url}?${parseJson2Param(options.params)}`
+  // console.log('验证码结果',result)
   return result
 }
 

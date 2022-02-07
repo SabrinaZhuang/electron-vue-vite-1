@@ -1,6 +1,6 @@
 import { uploadAxiosApi } from '@/api/develop/oss'
 
-const QuillDeltaToHtmlConverter = require('quill-delta-to-html').QuillDeltaToHtmlConverter
+import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
 
 // toolbar工具栏的工具选项（默认展示全部）
 export const toolOptions = [
@@ -30,7 +30,7 @@ export const toolOptions = [
   ['clean'] // 清除
 ]
 export const handlers = {
-  image: function image () {
+  image: function image() {
     const self = this
     let fileInput = this.container.querySelector('input.ql-image[type=file]')
     if (fileInput === null) {
@@ -80,7 +80,7 @@ export const delta2Html = (delta) => {
   const deltaOptions = {
     inlineStyles: {
       align: (val) => {
-        return `text-align: ${ val }`
+        return `text-align: ${val}`
       }
     }
   }

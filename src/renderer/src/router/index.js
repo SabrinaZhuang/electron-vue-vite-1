@@ -4,28 +4,60 @@ import NProgress from 'nprogress'
 import { isURL } from '@/utils/regular'
 import { userMenusApi } from '@/api/login'
 
+
+
+// /**
+//  * 解析路由表
+//  * @param routerMap 后台请求的路由表
+//  * @returns 系统路由
+//  */
+// export const routerFilterFunc = (routerMap) => {
+//   const arr = [];
+//   routerMap.forEach(item => {
+//     const obj= {
+//       ...item,
+//       beforeComponent: item.component
+//     };
+//     if (obj.children) {
+//       obj.children = routerFilterFunc(obj.children);
+//     }
+//     if (item.component == "Layout") {
+//       obj.component = RouterView;
+//     } else {
+//       const component = modulesFile[`../views/${obj.component}.vue`];
+//       if (component) {
+//         obj.component = modulesFile[`../views/${obj.component}.vue`];
+//       } else {
+//         obj.component = () => import("../views/global/404.vue");
+//       }
+//     }
+//     arr.push(obj);
+//   });
+//   return arr;
+// };
+
 let refresh = true
 
 /* 通用 */
 const global = [
   { path: '/', redirect: { name: 'login' }, meta: { title_cn: '重定向', title_en: 'Redirect' } },
-  { path: '/login', name: 'login', component: () => import('@/views/global/login.vue'), meta: { title_cn: '登录', title_en: 'Login' } },
-  { path: '/401', name: '401', component: () => import('@/views/global/401.vue'), meta: { title_cn: '401', title_en: '401' } },
-  { path: '/404', name: '404', component: () => import('@/views/global/404.vue'), meta: { title_cn: '404', title_en: '404' } },
-  { path: '/500', name: '500', component: () => import('@/views/global/500.vue'), meta: { title_cn: '500', title_en: '500' } }
+  { path: '/login', name: 'login', component: () => import('../views/global/login.vue'), meta: { title_cn: '登录', title_en: 'Login' } },
+  { path: '/401', name: '401', component: () => import('../views/global/401.vue'), meta: { title_cn: '401', title_en: '401' } },
+  { path: '/404', name: '404', component: () => import('../views/global/404.vue'), meta: { title_cn: '404', title_en: '404' } },
+  { path: '/500', name: '500', component: () => import('../views/global/500.vue'), meta: { title_cn: '500', title_en: '500' } }
 ]
 
 /* 主入口 */
 const main = {
   path: '/layout',
   name: 'layout',
-  component: () => import('@/views/layout/index.vue'),
+  component: () => import('../views/layout/index.vue'),
   meta: { title_cn: '主入口整体布局', title_en: 'Overall layout of main entrance' },
   children: [
     {
       path: '/home',
       name: 'home',
-      component: () => import('@/views/modules/home/index.vue'),
+      component: () => import('../views/modules/home/index.vue'),
       meta: {
         id: 'home',
         title_cn: '首页',
@@ -93,54 +125,64 @@ function currentRouteType(route, commonRoutes = []) {
   return temp.length >= 1 ? currentRouteType(route, temp) : 'main'
 }
 
-// /**
-//  * @description: 动态添加路由
-//  * @param {Array} menus
-//  * @param {Array} routeList
-//  * @return {*}
-//  * @author: gumingchen
-//  */
-// function addRoutes(menus = [], routeList = []) {
-//   let list = []
-//   menus.forEach((item, _index) => {
-//     if (item.children && item.children.length > 0) {
-//       list = list.concat(item.children)
-//     }
-//     if (item.url && /\S/u.test(item.url)) {
-//       const route = {
-//         path: '/' + item.url.replace(/\//g, '-'),
-//         name: item.url.replace(/\//g, '-'),
-//         component: () => import(`@/views/modules/${ item.url }.vue`) || null,
-//         meta: {
-//           id: item.id,
-//           title_cn: item.name_cn,
-//           title_en: item.name_en,
-//           isDynamic: true,
-//           isTab: item.is_tab === 1,
-//           type: item.type,
-//           keepAlive: item.is_alive === 1,
-//           multiple: item.is_multiple === 1
-//         }
-//       }
-//       if (isURL(item.url)) {
-//         route['path'] = `/i-${ item.id }`
-//         route['name'] = `i-${ item.id }`
-//         route['component'] = () => import(`@/views/modules/iframe/index.vue`)
-//         route['meta']['iframeUrl'] = item.url
-//       }
-//       routeList.push(route)
-//     }
-//   })
-//   if (list.length >= 1) {
-//     addRoutes(list, routeList)
-//   } else {
-//     main.children = main.children.concat(routeList)
-//     console.log('%c!<-------------------- 动态(菜单)路由 s -------------------->', 'color:blue')
-//     console.log(main.children)
-//     console.log('%c!<-------------------- 动态(菜单)路由 e -------------------->', 'color:blue')
-//     router.addRoute(main)
-//   }
-// }
+//引入所有views下.vue文件
+const modulesFile = import.meta.glob("../views/modules/**/**.vue");
+console.log(modulesFile);
+/**
+ * @description: 动态添加路由
+ * @param {Array} menus
+ * @param {Array} routeList
+ * @return {*}
+ * @author: gumingchen
+ */
+function addRoutes(menus = [], routeList = []) {
+  let list = []
+  menus.forEach((item, _index) => {
+    if (item.children && item.children.length > 0) {
+      list = list.concat(item.children)
+    }
+    if (item.url && /\S/u.test(item.url)) {
+      console.log('item:',item,'neirong:',item.url);
+      console.log('../views/modules/'+item.url+'.vue');
+      console.log('/' + item.url.replace(/\//g, '-'));
+      console.log(item.url.replace(/\//g, '-'),);
+      const route = {
+        path: '/' + item.url.replace(/\//g, '-'),
+        name: item.url.replace(/\//g, '-'),
+        // component: () => import(`../views/modules/${item.url}.vue`) || null,
+        component:modulesFile['../views/modules/'+item.url+'.vue'],
+        meta: {
+          id: item.id,
+          title_cn: item.name_cn,
+          title_en: item.name_en,
+          isDynamic: true,
+          isTab: item.is_tab === 1,
+          type: item.type,
+          keepAlive: item.is_alive === 1,
+          multiple: item.is_multiple === 1
+        }
+      }
+      console.log('luyou',route);
+      if (isURL(item.url)) {
+        route['path'] = `/i-${item.id}`
+        route['name'] = `i-${item.id}`
+        // route['component'] = () => import(`../views/modules/iframe/index.vue`)
+        route['component']=modulesFile['../views/modules/iframe/index.vue']
+        route['meta']['iframeUrl'] = item.url
+      }
+      routeList.push(route)
+    }
+  })
+  if (list.length >= 1) {
+    addRoutes(list, routeList)
+  } else {
+    main.children = main.children.concat(routeList)
+    console.log('%c!<-------------------- 动态(菜单)路由 s -------------------->', 'color:blue')
+    console.log(main.children)
+    console.log('%c!<-------------------- 动态(菜单)路由 e -------------------->', 'color:blue')
+    router.addRoute(main)
+  }
+}
 
 /**
  * @description: 清除动态添加的路由
@@ -164,7 +206,7 @@ router.beforeEach(async (to, _from, next) => {
   // 跳转到登录页清除所有信息
   if (to.name === 'login') {
     clearRouter()
-    console.log('这是：',store)
+    // console.log('这是：', store)
     store.dispatch('setting/exit')
   }
   NProgress.start()
@@ -195,8 +237,8 @@ router.beforeEach(async (to, _from, next) => {
     }
     refresh = false
     const menus = store.getters['menu/menus']
-    console.log('ddddd:',menus)
-    // addRoutes(menus)
+    // console.log('ddddd:', menus)
+    addRoutes(menus)
     next({ ...to, replace: true })
   }
 })
@@ -211,7 +253,7 @@ router.push = (to) => {
   try {
     return originalPush(to)
   } catch (error) {
-    console.log(`%c${ error }`, 'color:red')
+    console.log(`%c${error}`, 'color:red')
     return originalPush({ name: '401' })
   }
 }

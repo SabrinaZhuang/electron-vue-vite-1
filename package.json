@@ -41,6 +41,8 @@
     "lodash": "^4.17.21",
     "nprogress": "^0.2.0",
     "qs": "^6.10.3",
+    "quill": "^1.3.7",
+    "quill-delta-to-html": "^0.12.0",
     "sass": "^1.49.7",
     "screenfull": "^6.0.1",
     "svg-sprite-loader": "^6.0.11",

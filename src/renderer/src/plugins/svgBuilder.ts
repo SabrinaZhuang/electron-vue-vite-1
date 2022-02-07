@@ -1,35 +1,43 @@
-import { Plugin } from 'vite'
 import { readFileSync, readdirSync } from 'fs'
 
+// id 前缀
 let idPerfix = ''
+
+// 识别svg标签的属性
 const svgTitle = /<svg([^>+].*?)>/
+
+// 有一些svg文件的属性会定义height和width，要把它清除掉
 const clearHeightWidth = /(width|height)="([^>+].*?)"/g
 
+// 没有viewBox的话就利用height和width来新建一个viewBox
 const hasViewBox = /(viewBox="[^>+].*?")/g
 
+// 清除换行符
 const clearReturn = /(\r)|(\n)/g
 
-function findSvgFile(dir): string[] {
-  console.log(dir)
-  const svgRes = []
+/**
+ * @param dir 路径
+*/
+function findSvgFile(dir: string): string[] {
+  const svgRes: string[] = []
   const dirents = readdirSync(dir, {
     withFileTypes: true
   })
   for (const dirent of dirents) {
+    const path = dir + dirent.name
     if (dirent.isDirectory()) {
-      svgRes.push(...findSvgFile(dir + dirent.name + '/'))
+      svgRes.push(...findSvgFile(path + '/'))
     } else {
-      const svg = readFileSync(dir + dirent.name)
+      const svg = readFileSync(path)
         .toString()
         .replace(clearReturn, '')
         .replace(svgTitle, ($1, $2) => {
-          // console.log(++i)
-          // console.log(dirent.name)
           let width = 0
           let height = 0
           let content = $2.replace(
             clearHeightWidth,
             (s1, s2, s3) => {
+              s3 = s3.replace('px', '')
               if (s2 === 'width') {
                 width = s3
               } else if (s2 === 'height') {
@@ -52,16 +60,12 @@ function findSvgFile(dir): string[] {
   }
   return svgRes
 }
+import { Plugin } from 'vite'
 
-export const svgBuilder = (
-  path: string,
-  perfix = 'icon'
-): Plugin => {
+export const svgBuilder = (path: string, perfix = 'icon'): Plugin => {
   if (path === '') return
   idPerfix = perfix
-  const res = findSvgFile(path)
-  // console.log(res.length)
-  // const res = []
+  const res = findSvgFile(path) //引用上面的
   return {
     name: 'svg-transform',
     transformIndexHtml(html): string {

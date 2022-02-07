@@ -12,16 +12,26 @@
  * @LastEditors: gumingchen
  * @LastEditTime: 2021-04-21 16:45:30
  */
-const requireAll = (requireContext) => requireContext.keys().map(requireContext)
+// const requireAll = (requireContext) => requireContext.keys().map(requireContext)
 // const req = require.context('./svg', false, /\.svg$/u)
-const req=import.meta.glob('./svg/**.svg')
-requireAll(req)
+const req = import.meta.glob('./svg/**.svg')
+// requireAll(req)
+req.forEach(element => {
 
+});
 // const svgFiles = require.context('./svg', true, /\.svg$/u)
-const svgFiles=import.meta.glob('./svg/**.svg')
-const iconList = svgFiles.keys().map(item => {
-  return item.slice(2, -4)
-})
+const svgFiles = import.meta.glob('./svg/**.svg')
+console.log('svgFiles', svgFiles)
+const iconList = []
+for (const keys in svgFiles) {
+  svgFiles[keys]().then(res => {
+    console.log('res', res)
+    iconList.push(res.slice(2, -4))
+  })
+}
+// const iconList = svgFiles.keys().map(item => {
+//   return item.slice(2, -4)
+// })
 
 export default {
   // 获取图标(*).svg名称列表, 例如[shouye, xitong, zhedie, ...]

@@ -100,7 +100,7 @@ export function parseDate2Str(time = new Date(), format = '{y}-{M}-{d} {h}:{m}:{
  */
 export function parseStr2Date(time = '', separator = ['-', ' ', ':']) {
   let result = new Date()
-  const regexp = `/[${ separator.join('') }]/g`
+  const regexp = `/[${separator.join('')}]/g`
   const data = time.split(eval(regexp))
   switch (data.length) {
     case 3:
@@ -192,12 +192,12 @@ export function isAuth(key) {
  * @return {*}
  * @author: gumingchen
  */
-export function getApiBaseUrl () {
+export function getApiBaseUrl() {
   const baseUrl = import.meta.env.VITE_APP_PROXY === 'true'
-    ? `/proxy${ MAPPING }`
+    ? `/proxy${MAPPING}`
     : import.meta.env.VITE_APP_BASE_API + MAPPING
-    console.log(import.meta.env)
-    console.log('baseUrl结果',baseUrl)
+  // console.log(import.meta.env)
+  // console.log('baseUrl结果',baseUrl)
   return baseUrl
 }
 
